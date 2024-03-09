@@ -3,7 +3,7 @@ import re
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-result_path = '/home/luoyk/Learning/ZJU/Tao/Week1/data/test/'
+result_path = 'data/test/'
 all_files = os.listdir(result_path)
 
 def sort_by_number(filename):
