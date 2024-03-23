@@ -52,30 +52,44 @@ class DrawingApp:
         self.old_x = None
         self.old_y = None
     
-    def scan_line_fill(self):
-        for row in range(20):
-            col = 0
-            fill_flag = False
-            while col < 20:
-                if self.fill_grid[row, col] == 1:
-                    # 检查是否为孤立点
-                    is_isolated = True
-                    if col > 0 and self.fill_grid[row, col - 1] == 1:
-                        is_isolated = False
-                    if col < 19 and self.fill_grid[row, col + 1] == 1:
-                        is_isolated = False
-                    
-                    if not is_isolated:
-                        # 如果不是孤立点，则切换填充状态并继续
-                        fill_flag = not fill_flag
-                    # 对于孤立点和非孤立点，都移动到下一个区段进行检查
-                    col += 1
-                    while col < 20 and self.fill_grid[row, col] == 1:
-                        col += 1
-                else:
-                    if fill_flag:
-                        self.fill_grid[row, col] = 2  # 使用2表示填充区域
-                    col += 1
+    def judge_inside(self,x, y):
+
+        l=False 
+        l_first=0
+        r=False
+        r_first=0
+        u=False
+        u_first=0
+        d=False
+        for i in range(x-1, -1, -1):
+            if self.fill_grid[i,y]==1:
+                l=True
+                l_first=i
+                break
+        for i in range(x+1, 20):
+            if self.fill_grid[i,y]==1:
+                r=True
+                r_first=i
+                break
+        for j in range(y-1, -1, -1):
+            if self.fill_grid[x,j]==1:
+                u=True
+                u_first=j
+                break
+        for j in range(y+1, 20):
+            if self.fill_grid[x,j]==1:
+                d=True
+                d_first=j
+                break
+        if l and r and u and d:
+            for i in range(l_first, r_first):
+                self.fill_grid[i,y]=1
+
+            for j in range(u_first, d_first):
+                self.fill_grid[x,j]=1
+
+            return True
+                
  
 
     def save(self):
@@ -110,13 +124,21 @@ class DrawingApp:
         self.fill_grid=self.fill_grid.T
         print(self.fill_grid)
 
-
-        self.scan_line_fill()
         # Step 2: Reload the image and find a black pixel for flood fill
-        for i in range(20):
-            for j in range(20):
-                if self.fill_grid[i, j] == 2:  # 检查填充标志
-                    draw.rectangle([(j, i), (j + 1, i + 1)], fill="grey")  # 使用灰色填充
+        for j in range(20):
+            for i in range(20):
+                self.judge_inside(i,j)
+
+        print(self.fill_grid)
+                    
+
+        for i in range (20):
+            for j in range (20):
+                if self.fill_grid[i,j]==1:
+
+                    draw_filled.point((j, i), fill="black")
+
+        print(self.fill_grid)          
 
         
         # Save the final result
